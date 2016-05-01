@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import os
 import logging
-
+import tornado.httpserver
 from tornado.ioloop import IOLoop
 from tornado.options import define, options
 from tornado.web import Application, RequestHandler
@@ -39,28 +39,29 @@ class EchoWebSocket(WebSocketHandler):
 def main():
 
 
+    #tornado.ioloop.IOLoop.instance().start()
+    #options.parse_command_line()
 
-    define('listen', metavar='IP', default='192.168.0.7', help='listen on IP address (default 192.168.0.7)')
-    define('port', metavar='PORT', default=8888, type=int, help='listen on PORT (default 8888)')
-    define('debug', metavar='True|False', default=False, type=bool, 
-        help='enable Tornado debug mode: templates will not be cached '
-        'and the app will watch for changes to its source files '
-        'and reload itself when anything changes')
-    
-    options.parse_command_line()
     
     settings = dict(
         template_path=rel('templates'),
-        static_path=rel('static'),
-        debug=options.debug
+        static_path=rel('static')
+        #debug=options.debug
     )
     
     application = Application([
         (r'/', MainHandler),
         (r'/ws', EchoWebSocket),
     ], **settings)
+    http_server = tornado.httpserver.HTTPServer(application)
+    port = int(os.environ.get("PORT", 5000))
+    #define('debug', metavar='True|False', default=False, type=bool, 
+    #    help='enable Tornado debug mode: templates will not be cached '
+    #    'and the app will watch for changes to its source files '
+    #    'and reload itself when anything changes')
+    http_server.listen(port)
     
-    application.listen(address=options.listen, port=options.port)
+    #application.listen(address=options.listen, port=options.port)
     IOLoop.instance().start()
 
 
