@@ -52,7 +52,7 @@ var ICEServers =
 
 
 function connect(stream) {
-    pc = new RTCPeerConnection(null);
+    pc = new RTCPeerConnection(ICEServers);
     
     if (stream) {
         pc.addStream(stream);
