@@ -39,6 +39,9 @@ var ICE_config= {
 }
 var initiator;
 var pc =  new RTCPeerConnection(ICE_config);
+var divbox= $('#dialog-message');
+divbox.dialog({autoOpen: false});
+notifyoffer();
 
 
 function call() {
@@ -54,6 +57,19 @@ function receive() {
     init();
 }
 
+function accept(){
+    $('#btn-accept').addClass('btn-active');
+    $('#dialog-message').dialog("close");
+    receive();
+    ws.send(JSON.stringify({"accept":1}))
+}
+
+function reject(){
+    $('#btn-accept').addClass('btn-active');
+    $('#dialog-message').dialog("close")
+    ws.send(JSON.stringify({"accept":0}));
+}
+
 
 function init() {
     var constraints = {
@@ -65,6 +81,21 @@ function init() {
         getUserMedia(constraints, connect, fail);
     } else {
         connect();
+    }
+}
+
+function notifyoffer(stream){
+    ws.onmessage = function (event){
+        var signal = JSON.parse(event.data)
+        if (signal.type=="offer"){
+            var divbox= $('#dialog-message');
+            divbox.dialog('open');         
+        }
+        var check = JSON.parse(event.data);
+        if (check.accept==1){
+            log("accept call");
+            call();
+        }
     }
 }
 
@@ -97,6 +128,11 @@ function connect(stream) {
             }
         } else if (signal.candidate) {
             pc.addIceCandidate(new RTCIceCandidate(signal));
+        }
+        var check = JSON.parse(event.data);
+        if (check.accept==1){
+            log("accept call");
+            call();
         }
     };
     
