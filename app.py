@@ -19,7 +19,7 @@ class MainHandler(RequestHandler):
 
 class EchoWebSocket(WebSocketHandler):
     clients = []
-    
+
     def open(self):
         logging.info('WebSocket opened from %s', self.request.remote_ip)
         EchoWebSocket.clients.append(self)
@@ -42,7 +42,6 @@ def main():
     #tornado.ioloop.IOLoop.instance().start()
     #options.parse_command_line()
 
-    
     settings = dict(
         template_path=rel('templates'),
         static_path=rel('static')
