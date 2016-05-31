@@ -10,14 +10,31 @@ from tornado.websocket import WebSocketHandler
 import momoko
 import psycopg2
 import urlparse
+import base64
 
 
 rel = lambda *x: os.path.abspath(os.path.join(os.path.dirname(__file__), *x))
 
+class BaseHandler(RequestHandler):
+    def get_current_user(self):
+        return self.get_secure_cookie("user")
 
-class MainHandler(RequestHandler):
+
+class MainHandler(BaseHandler):
     def get(self):
+        if not self.current_user:
+            self.redirect("/login")
         self.render('index.html')
+
+
+class LoginHandler(BaseHandler):
+    def get(self):
+        self.render('login.html')
+    
+    def post(self):
+        self.set_secure_cookie("user",self.get_argument("name"))
+        self.redirect("/")
+
 
 
 class EchoWebSocket(WebSocketHandler):
@@ -47,13 +64,17 @@ def main():
 
     settings = dict(
         template_path=rel('templates'),
-        static_path=rel('static')
+        static_path=rel('static'),
+        cookie_secrets=base64.b64encode(os.urandom(50)).decode('ascii'),
+        login_url="/login",
+        #xsrf_cookies=True,
         #debug=options.debug
     )
     
     application = Application([
         (r'/', MainHandler),
         (r'/ws', EchoWebSocket),
+        (r'/login',LoginHandler),
     ], **settings)
 
     ioloop = IOLoop.instance()

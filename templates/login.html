@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Login Tornado WebRTC</title>
+    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{{ static_url('css/materialize.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ static_url('css/main.css') }}">
+    <link href='https://fonts.googleapis.com/css?family=Oswald:400,700' rel='stylesheet' type='text/css'>
+  </head>
+  <body id="home">
+
+  <div class="navbar-fixed">
+  <nav>
+    <div class="nav-wrapper grey darken-4">
+      <a href="#" class="brand-logo center"><h4 id="my_font_text">WEBCHAT-BOX</h4></a>
+      <ul id="nav-mobile" class="right hide-on-med-and-down">
+        
+        <li><a href="#developers" class='dropdown-button' data-beloworigin="true" id="my_font_text" data-activates='dropdown1'>Meet Our Team</a></li>
+        
+      </ul>
+  <ul id='dropdown1' class='dropdown-content'>
+    <li><a href="#developers" class=" black-text" >SANCHIT GOEL</a></li>
+    <li><a href="#developers" class=" black-text" >SATYAM SAMMI</a></li>
+  <li><a href="#developers" class=" black-text" >SAMEER MAKKER</a></li>     
+  <li><a href="#developers" class=" black-text" >SATVIK MAHAJAN</a></li>
+  <li><a href="#developers" class=" black-text" >SANDEEP KUMAR</a></li>
+  </ul>   
+   
+
+<ul id="nav-mobile" class="left hide-on-med-and-down">
+        
+        <li><a href="#home" id="my_font_text" >Home</a></li>
+        
+      </ul>
+
+    </div>
+  </nav>
+  </div>
+
+<div class="container">
+ <div class="row">
+  <form class="col s12" action="\login" method="post">
+    <div class="input-field col s4 offset-4">
+      <i class="material-icons prefix">account_circle</i>
+      <input id="icon_prefix" type="text" class="validate" name="name">
+      <label for="icon_prefix2">Name</label>
+    </div>
+    <div class="btn-group center">
+      <input id="btn-call" class="btn green darken-5" type="Submit">Login</button>
+    </div>
+    </form>
+  </div>
+</div>
+<div id="developers">
+  <h2 class="center grey darken-4 white-text" id="my_font_text">OUR TEAM</h2>
+  
+    <div class="row">
+
+      <div class="col s4 m4 l4 " id="team_pic_div">
+  <img class="materialboxed hoverable center" id="team_pic" id="sanchit" data-caption="SANCHIT GOEL 357/COE/13" src="{{ static_url('images/sanchit.jpg') }}" width=60% height="300px" >
+  
+        
+      </div>
+      <div class="col s4 m4 l4" id="team_pic_div">
+        <img class="materialboxed hoverable center" id="team_pic" id="satyam" data-caption="SATYAM SAMMI 360/COE/13" src="{{ static_url('images/satyam.JPG') }}" width=60% height="300px" >
+  
+      </div>
+      <div class="col s4 m4 l4" id="team_pic_div">
+        <img class="materialboxed hoverable center-align" id="team_pic" id="sameer" data-caption="SAMEER MAKKER 356/COE/13" src="{{ static_url('images/sameer.jpg') }}" width=60% height="300px" >
+
+    </div>
+          
+  </div>      
+  
+   <div class="row">
+
+      <div class="col s4 m4 l4 offset-l2" id="team_pic_div">
+  <img class="materialboxed hoverable right-align" id="team_pic" id="sandeep" data-caption="SANDEEP KUMAR 358/COE/13" src="{{ static_url('images/sandeep.jpg') }}" width=60% height="300px" >
+  
+        
+      </div>
+      <div class="col s4 m4 l4 center-align" id="team_pic_div">
+        <img class="materialboxed hoverable center" id="team_pic" id="satvik" data-caption="SATVIK MAHAJAN 359/COE/13" src="{{ static_url('images/satvik.jpg') }}" width=60% height="300px" >
+  
+      </div>
+
+   </div>
+  
+        <footer class="page-footer grey darken-4">
+          <div class="container grey darken-4">
+            <div class="row">
+              <div class="col l6 s12">
+                
+                <h3 class="grey-text text-lighten-4" id="my_font_text">A perfect place to connect.</h3>
+              </div>
+              <div class="col l4 offset-l2 s12">
+                <h5 class="grey-text text-lighten-4" id="my_font_text">WINTER TRAINING PROJECT. </br> 2013-17 BATCH.</h5>
+                
+              </div>
+            </div>
+          </div>
+          <div class="footer-copyright">
+            <div class="container">
+            © 2016 WEBCHAT-BOX Copyright reserved. 
+            
+            </div>
+          </div>
+        </footer>
+            
+
+    <footer id="foot">
+      <span id="streaming" class="small"></span>
+      <span id="status" class="small"></span>
+    </footer>
+    <div id="dialog-message" >
+    <button id="btn-reject" class="btn left red " onclick="reject()">Reject</button>
+      <button id="btn-accept" class="btn right green " onclick="accept()">Receve</button>
+    </div>
+  
+   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+   <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+   <script src="{{ static_url('js/webrtc-adapter.js') }}"></script>
+   <script src="{{ static_url('js/main.js') }}"></script>
+   <script src="{{ static_url('js/materialize.min.js') }}"></script>
+  </body>
+</html>
+
+
+
