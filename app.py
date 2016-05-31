@@ -66,7 +66,6 @@ def main():
         template_path=rel('templates'),
         static_path=rel('static'),
         cookie_secrets=base64.b64encode(os.urandom(50)).decode('ascii'),
-        login_url="/login",
         #xsrf_cookies=True,
         #debug=options.debug
     )
