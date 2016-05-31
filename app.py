@@ -59,13 +59,13 @@ def main():
     ioloop = IOLoop.instance()
     urlparse.uses_netloc.append("postgres")
     url = urlparse.urlparse(os.environ["DATABASE_URL"])
-	application.db = momoko.Pool(
-		dsn='database=url.path[1:] user=url.username password=url.password',
-		'host=url.hostname,port=url.port',
-		size=1,
-		ioloop=ioloop
-		)
-	future = application.db.connect()
+    application.db = momoko.Pool(
+        dsn='dbname=url.path[1:] user=url.username password=url.password'
+        'host=url.hostname port=url.port',
+        size=1,
+        ioloop=ioloop
+        )
+    future = application.db.connect()
 
     http_server = tornado.httpserver.HTTPServer(application)
     port = int(os.environ.get("PORT", 5000))
