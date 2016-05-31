@@ -65,6 +65,7 @@ def main():
 		size=1,
 		ioloop=ioloop
 		)
+	future = application.db.connect()
 
     http_server = tornado.httpserver.HTTPServer(application)
     port = int(os.environ.get("PORT", 5000))
