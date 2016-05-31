@@ -65,7 +65,7 @@ def main():
     settings = dict(
         template_path=rel('templates'),
         static_path=rel('static'),
-        cookie_secrets=base64.b64encode(os.urandom(50)).decode('ascii'),
+        cookie_secret=base64.b64encode(os.urandom(50)).decode('ascii'),
         #xsrf_cookies=True,
         #debug=options.debug
     )
