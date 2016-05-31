@@ -7,6 +7,9 @@ from tornado.ioloop import IOLoop
 from tornado.options import define, options
 from tornado.web import Application, RequestHandler
 from tornado.websocket import WebSocketHandler
+import momoko
+import psycopg2
+import urlparse
 
 
 rel = lambda *x: os.path.abspath(os.path.join(os.path.dirname(__file__), *x))
@@ -52,6 +55,17 @@ def main():
         (r'/', MainHandler),
         (r'/ws', EchoWebSocket),
     ], **settings)
+
+    ioloop = IOLoop.instance()
+    urlparse.uses_netloc.append("postgres")
+    url = urlparse.urlparse(os.environ["DATABASE_URL"])
+	application.db = momoko.Pool(
+		dsn='database=url.path[1:] user=url.username password=url.password',
+		'host=url.hostname,port=url.port',
+		size=1,
+		ioloop=ioloop
+		)
+
     http_server = tornado.httpserver.HTTPServer(application)
     port = int(os.environ.get("PORT", 5000))
     #define('debug', metavar='True|False', default=False, type=bool, 
