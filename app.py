@@ -121,6 +121,7 @@ def main():
         (r'/', MainHandler),
         (r'/ws', EchoWebSocket),
         (r'/login',LoginHandler),
+        (r'/register',RegisterHandler),
     ], **settings)
 
     ioloop = IOLoop.instance()
