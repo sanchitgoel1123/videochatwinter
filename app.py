@@ -126,9 +126,9 @@ def main():
     ioloop = IOLoop.instance()
     urlparse.uses_netloc.append("postgres")
     url = urlparse.urlparse(os.environ["DATABASE_URL"])
+    dsn = "dbname='%s' user='%s' password='%s' host='%s' port='%s'"%( url.path[1:], url.username, url.password, url.hostname, url.port)
     application.db = momoko.Pool(
-        dsn='dbname=url.path[1:] user=url.username password=url.password'
-        'host=url.hostname port=url.port',
+        dsn=dsn,
         size=1,
         ioloop=ioloop
         )
