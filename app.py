@@ -65,8 +65,6 @@ class RegisterHandler(BaseHandler):
             msg['errormsg'] = errormessage
             self.render('register.html', msg=msg)
         else:
-            salt  = base64.urlsafe_b64encode(uuid.uuid4().bytes)
-            hashed_password =  pwd_context.encrypt(salt+password1)
             sqlstm = "insert into usercredentials values (%s,%s,%s,%s,%s,%s)"
             check = "select email from usercredentials where email like '%s'"
             x = self.db.execute(str(check),(emailid))
@@ -76,6 +74,8 @@ class RegisterHandler(BaseHandler):
                 msg['errormsg'] = errormessage
                 self.render('register.html', msg=msg)
             else:
+                salt  = base64.urlsafe_b64encode(uuid.uuid4().bytes)
+                hashed_password =  pwd_context.encrypt(salt+password1)
                 try:
                     self.db.execute(str(sqlstm),(firstname,lastname,emailid,hashed_password,salt,dob))
                 except:
