@@ -136,13 +136,13 @@ def main():
     ioloop.add_future(future, lambda f: ioloop.stop())
     ioloop.start()
     future.result()
-    http_server = tornado.httpserver.HTTPServer(application)
+    #http_server = tornado.httpserver.HTTPServer(application)
     port = int(os.environ.get("PORT", 5000))
     #define('debug', metavar='True|False', default=False, type=bool, 
     #    help='enable Tornado debug mode: templates will not be cached '
     #    'and the app will watch for changes to its source files '
     #    'and reload itself when anything changes')
-    http_server.listen(port)
+    application.listen(port)
     
     #application.listen(address=options.listen, port=options.port)
     ioloop.start()
