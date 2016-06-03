@@ -13,6 +13,7 @@ import momoko
 import psycopg2
 import hashlib
 from passlib.apps import custom_app_context as pwd_context
+import urlparse
 
 rel = lambda *x: os.path.abspath(os.path.join(os.path.dirname(__file__), *x))
 
