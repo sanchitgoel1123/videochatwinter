@@ -14,6 +14,7 @@ import psycopg2
 import hashlib
 from passlib.apps import custom_app_context as pwd_context
 import urlparse
+from tornado import gen
 
 rel = lambda *x: os.path.abspath(os.path.join(os.path.dirname(__file__), *x))
 
@@ -47,6 +48,7 @@ class RegisterHandler(BaseHandler):
         msg = {}
         self.render('register.html',msg=msg)
 
+    @gen.coroutine
     def post(self):
         emailid=self.get_argument('email')
         firstname=self.get_argument('First_Name')
@@ -65,21 +67,31 @@ class RegisterHandler(BaseHandler):
             msg['errormsg'] = errormessage
             self.render('register.html', msg=msg)
         else:
-            sqlstm = "insert into usercredentials values (%s,%s,%s,%s,%s,%s)"
-            check = "select email from usercredentials where email like '%s'"
-            x = self.db.execute(str(check),(emailid))
-            if x == emailid:
+            salt  = base64.urlsafe_b64encode(uuid.uuid4().bytes)
+            hashed_password =  pwd_context.encrypt(salt+password1)
+            sqlstm = "insert into usercredentials values (%s,%s,%s,%s,%s,%s);"
+            check = "select email from usercredentials where email='%s';"%(emailid)
+            logging.info(str(check))
+            x = self.db.execute(check)
+            y = yield x
+            x = y.fetchone()
+            logging.info(x is not None)
+            if (x is not None):
                 errormessage="User Already Exists"
-                msg = { }
+                msg = {}
                 msg['errormsg'] = errormessage
                 self.render('register.html', msg=msg)
             else:
-                salt  = base64.urlsafe_b64encode(uuid.uuid4().bytes)
-                hashed_password =  pwd_context.encrypt(salt+password1)
                 try:
-                    self.db.execute(str(sqlstm),(firstname,lastname,emailid,hashed_password,salt,dob))
+                    yield self.db.execute(str(sqlstm),(firstname,lastname,emailid,hashed_password,salt,dob))
+                    self.set_secure_cookie("user", emailid)
+                    self.redirect('/')
                 except:
                     self.write(str(error))
+                    errormessage="Database Error.Please Try Later"
+                    msg = { }
+                    msg['errormsg'] = errormessage
+                    self.redirect('/register')
         
 
 class EchoWebSocket(WebSocketHandler):
