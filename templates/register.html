@@ -38,8 +38,10 @@
     </div>
   </nav>
   </div>
-
+<main>  
+<div id="body">
 <div class="container">
+<div class=" card-panel grey darken-4 col m8 s12 offset-m2 hover">
   {% if 'errormsg' in msg %}
   <div class="row">
     <div class="col s12 m6 offset-m4" id="error">
@@ -69,7 +71,8 @@
       </div>
       <div class="input-field col s12 m4 " >
           <i class="material-icons prefix">today</i>
-          <input type="date" class="datepicker" value="Date Of Birth" name="dob">
+          <input id="icon_prefix" type="date" class="datepicker" name="dob">
+          <label for="icon_prefix2">Date Of Birth</label>
     </div>
     </div>
     <div class="row">
@@ -91,43 +94,15 @@
     </div>
     </form>
 </div>
-<div id="developers">
-  <h2 class="center grey darken-4 white-text" id="my_font_text">OUR TEAM</h2>
+</div>
+</div>
+</main>
+     
   
-    <div class="row">
 
-      <div class="col s4 m4 l4 " id="team_pic_div">
-  <img class="materialboxed hoverable center" id="team_pic" id="sanchit" data-caption="SANCHIT GOEL 357/COE/13" src="{{ static_url('images/sanchit.jpg') }}" width=60% height="300px" >
-  
-        
-      </div>
-      <div class="col s4 m4 l4" id="team_pic_div">
-        <img class="materialboxed hoverable center" id="team_pic" id="satyam" data-caption="SATYAM SAMMI 360/COE/13" src="{{ static_url('images/satyam.JPG') }}" width=60% height="300px" >
-  
-      </div>
-      <div class="col s4 m4 l4" id="team_pic_div">
-        <img class="materialboxed hoverable center-align" id="team_pic" id="sameer" data-caption="SAMEER MAKKER 356/COE/13" src="{{ static_url('images/sameer.jpg') }}" width=60% height="300px" >
-
-    </div>
-          
-  </div>      
-  
-   <div class="row">
-
-      <div class="col s4 m4 l4 offset-l2" id="team_pic_div">
-  <img class="materialboxed hoverable right-align" id="team_pic" id="sandeep" data-caption="SANDEEP KUMAR 358/COE/13" src="{{ static_url('images/sandeep.jpg') }}" width=60% height="300px" >
-  
-        
-      </div>
-      <div class="col s4 m4 l4 center-align" id="team_pic_div">
-        <img class="materialboxed hoverable center" id="team_pic" id="satvik" data-caption="SATVIK MAHAJAN 359/COE/13" src="{{ static_url('images/satvik.jpg') }}" width=60% height="300px" >
-  
-      </div>
-
-   </div>
   
         <footer class="page-footer grey darken-4">
-          <div class="container grey darken-4">
+          <div class="grey darken-4">
             <div class="row">
               <div class="col l6 s12">
                 
@@ -139,19 +114,9 @@
               </div>
             </div>
           </div>
-          <div class="footer-copyright">
-            <div class="container">
-            © 2016 WEBCHAT-BOX Copyright reserved. 
-            
-            </div>
-          </div>
+       
         </footer>
             
-
-    <footer id="foot">
-      <span id="streaming" class="small"></span>
-      <span id="status" class="small"></span>
-    </footer>
     <div id="dialog-message" >
     <button id="btn-reject" class="btn left red darken-5" onclick="reject()">Reject</button>
       <button id="btn-accept" class="btn right green darken -5" onclick="accept()">Receve</button>

@@ -39,9 +39,10 @@
   </nav>
   </div>
 
-
+<main>
 <div class="container">
-  <form  action="\login" method="post">
+<div class=" card-panel grey darken-4 col m8 s10 offset-m2 hover">
+  <form  action="/login" method="post">
    {% module xsrf_form_html() %}
     <div class="row">
       <div class="input-field col s12 m4 offset-m2">
@@ -63,67 +64,26 @@
     <button id="btn-register" onclick="location.href='register'"  class="btn col m2 s12 offset-m5 green darken -5" >Register</button>
     </div>
 </div>
-<div id="developers">
-  <h2 class="center grey darken-4 white-text" id="my_font_text">OUR TEAM</h2>
+</div>  
+</main>    
   
-    <div class="row">
-
-      <div class="col s4 m4 l4 " id="team_pic_div">
-  <img class="materialboxed hoverable center" id="team_pic" id="sanchit" data-caption="SANCHIT GOEL 357/COE/13" src="{{ static_url('images/sanchit.jpg') }}" width=60% height="300px" >
+   
   
-        
-      </div>
-      <div class="col s4 m4 l4" id="team_pic_div">
-        <img class="materialboxed hoverable center" id="team_pic" id="satyam" data-caption="SATYAM SAMMI 360/COE/13" src="{{ static_url('images/satyam.JPG') }}" width=60% height="300px" >
-  
-      </div>
-      <div class="col s4 m4 l4" id="team_pic_div">
-        <img class="materialboxed hoverable center-align" id="team_pic" id="sameer" data-caption="SAMEER MAKKER 356/COE/13" src="{{ static_url('images/sameer.jpg') }}" width=60% height="300px" >
-
-    </div>
-          
-  </div>      
-  
-   <div class="row">
-
-      <div class="col s4 m4 l4 offset-l2" id="team_pic_div">
-  <img class="materialboxed hoverable right-align" id="team_pic" id="sandeep" data-caption="SANDEEP KUMAR 358/COE/13" src="{{ static_url('images/sandeep.jpg') }}" width=60% height="300px" >
-  
-        
-      </div>
-      <div class="col s4 m4 l4 center-align" id="team_pic_div">
-        <img class="materialboxed hoverable center" id="team_pic" id="satvik" data-caption="SATVIK MAHAJAN 359/COE/13" src="{{ static_url('images/satvik.jpg') }}" width=60% height="300px" >
-  
-      </div>
-
-   </div>
-  
-        <footer class="page-footer grey darken-4">
-          <div class="container grey darken-4">
+       <footer class="page-footer grey darken-4">
+          <div class="grey darken-4">
             <div class="row">
-              <div class="col l6 s12">
+              <div class="col l6 s10">
                 
                 <h3 class="grey-text text-lighten-4" id="my_font_text">A perfect place to connect.</h3>
               </div>
-              <div class="col l4 offset-l2 s12">
+              <div class="col l4 offset-l2 s10">
                 <h5 class="grey-text text-lighten-4" id="my_font_text">WINTER TRAINING PROJECT. </br> 2013-17 BATCH.</h5>
                 
               </div>
             </div>
           </div>
-          <div class="footer-copyright">
-            <div class="container">
-            © 2016 WEBCHAT-BOX Copyright reserved. 
-            
-            </div>
-          </div>
+       
         </footer>
-            
-
-    <footer id="foot">
-      <span id="streaming" class="small"></span>
-      <span id="status" class="small"></span>
-    </footer>
     <div id="dialog-message" >
     <button id="btn-reject" class="btn left red darken-5" onclick="reject()">Reject</button>
       <button id="btn-accept" class="btn right green darken -5" onclick="accept()">Receve</button>
