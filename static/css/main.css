@@ -124,6 +124,10 @@ body
     text-decoration-color: red;
 }
 
+#error{
+    color:red;
+}
+
 .picker__date-display, .picker__weekday-display{
     background-color: grey;
 }

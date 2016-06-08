@@ -1,35 +1,35 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1"> 
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Login Tornado WebRTC</title>
-    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="{{ static_url('css/materialize.min.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ static_url('css/main.css') }}">
-    <link href='https://fonts.googleapis.com/css?family=Oswald:400,700' rel='stylesheet' type='text/css'>
-  </head>
-  <body id="home">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1"> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Login Tornado WebRTC</title>
+  <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="{{ static_url('css/materialize.min.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ static_url('css/main.css') }}">
+  <link href='https://fonts.googleapis.com/css?family=Oswald:400,700' rel='stylesheet' type='text/css'>
+</head>
+<body id="home">
 
   <div class="navbar-fixed">
-  <nav>
-    <div class="nav-wrapper grey darken-4">
-      <a href="#" class="brand-logo center"><h4 id="my_font_text">WEBCHAT-BOX</h4></a>
-      <ul id="nav-mobile" class="right hide-on-med-and-down">
+    <nav>
+      <div class="nav-wrapper grey darken-4">
+        <a href="#" class="brand-logo center"><h4 id="my_font_text">WEBCHAT-BOX</h4></a>
+        <ul id="nav-mobile" class="right hide-on-med-and-down">
+          
+          <li><a href="#developers" class='dropdown-button' data-beloworigin="true" id="my_font_text" data-activates='dropdown1'>Meet Our Team</a></li>
+          
+        </ul>
+        <ul id='dropdown1' class='dropdown-content'>
+          <li><a href="#developers" class=" black-text" >SANCHIT GOEL</a></li>
+          <li><a href="#developers" class=" black-text" >SATYAM SAMMI</a></li>
+          <li><a href="#developers" class=" black-text" >SAMEER MAKKER</a></li>     
+          <li><a href="#developers" class=" black-text" >SATVIK MAHAJAN</a></li>
+          <li><a href="#developers" class=" black-text" >SANDEEP KUMAR</a></li>
+        </ul>   
         
-        <li><a href="#developers" class='dropdown-button' data-beloworigin="true" id="my_font_text" data-activates='dropdown1'>Meet Our Team</a></li>
-        
-      </ul>
-  <ul id='dropdown1' class='dropdown-content'>
-    <li><a href="#developers" class=" black-text" >SANCHIT GOEL</a></li>
-    <li><a href="#developers" class=" black-text" >SATYAM SAMMI</a></li>
-  <li><a href="#developers" class=" black-text" >SAMEER MAKKER</a></li>     
-  <li><a href="#developers" class=" black-text" >SATVIK MAHAJAN</a></li>
-  <li><a href="#developers" class=" black-text" >SANDEEP KUMAR</a></li>
-  </ul>   
-   
 
-<!--ul id="nav-mobile" class="left hide-on-med-and-down"-->
+        <!--ul id="nav-mobile" class="left hide-on-med-and-down"-->
         
         <li><a href="#home" id="my_font_text" >Home</a></li>
         
@@ -37,64 +37,71 @@
 
     </div>
   </nav>
-  </div>
+</div>
 
 <main>
-<div class="container">
-<div class=" card-panel grey darken-4 col m8 s10 offset-m2 hover">
-  <form  action="/login" method="post">
-   {% module xsrf_form_html() %}
-    <div class="row">
-      <div class="input-field col s12 m4 offset-m2">
-        <i class="material-icons prefix">account_circle</i>
-        <input id="icon_prefix" type="text" class="validate" name="name">
-        <label for="icon_prefix2">Name</label>
+  <div class="container">
+    <div class=" card-panel grey darken-4 col m8 s10 offset-m2 hover">
+      {% if 'errormsg' in msg %}
+      <div class="row">
+        <div class="col s12 m6 offset-m4" id="error">
+          <h5 class="error">{{ msg['errormsg'] }}</h5>
+        </div>
       </div>
-      <div class="input-field col s12 m4" >
-        <i class="material-icons prefix">vpn_key</i>
-        <input id="icon_prefix" type="password" class="validate" name="password" >
-        <label for="icon_prefix2">Password</label>
+      {% end %}
+      <form  action="/login" method="post">
+       {% module xsrf_form_html() %}
+       <div class="row">
+        <div class="input-field col s12 m4 offset-m2">
+          <i class="material-icons prefix">account_circle</i>
+          <input id="icon_prefix" type="text" class="validate" name="email">
+          <label for="icon_prefix2">Name</label>
+        </div>
+        <div class="input-field col s12 m4" >
+          <i class="material-icons prefix">vpn_key</i>
+          <input id="icon_prefix" type="password" class="validate" name="password" >
+          <label for="icon_prefix2">Password</label>
+        </div>
       </div>
-    </div>
-    <div class="row">
-      <input id="btn-submit" class="btn green darken-5  col m2 s12 offset-m5" type="Submit" value="Login">
-    </div>
+      <div class="row">
+        <input id="btn-submit" class="btn green darken-5  col m2 s12 offset-m5" type="Submit" value="Login">
+      </div>
     </form>
     <div class="row">
-    <button id="btn-register" onclick="location.href='register'"  class="btn col m2 s12 offset-m5 green darken -5" >Register</button>
+      <button id="btn-register" onclick="location.href='register'"  class="btn col m2 s12 offset-m5 green darken -5" >Register</button>
     </div>
-</div>
+  </div>
 </div>  
 </main>    
-  
-   
-  
-       <footer class="page-footer grey darken-4">
-          <div class="grey darken-4">
-            <div class="row">
-              <div class="col l6 s10">
-                
-                <h3 class="grey-text text-lighten-4" id="my_font_text">A perfect place to connect.</h3>
-              </div>
-              <div class="col l4 offset-l2 s10">
-                <h5 class="grey-text text-lighten-4" id="my_font_text">WINTER TRAINING PROJECT. </br> 2013-17 BATCH.</h5>
-                
-              </div>
-            </div>
-          </div>
-       
-        </footer>
-    <div id="dialog-message" >
-    <button id="btn-reject" class="btn left red darken-5" onclick="reject()">Reject</button>
-      <button id="btn-accept" class="btn right green darken -5" onclick="accept()">Receve</button>
+
+
+
+<footer class="page-footer grey darken-4">
+  <div class="grey darken-4">
+    <div class="row">
+      <div class="col l6 s10">
+        
+        <h3 class="grey-text text-lighten-4" id="my_font_text">A perfect place to connect.</h3>
+      </div>
+      <div class="col l4 offset-l2 s10">
+        <h5 class="grey-text text-lighten-4" id="my_font_text">WINTER TRAINING PROJECT. </br> 2013-17 BATCH.</h5>
+        
+      </div>
     </div>
+  </div>
   
-   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
-   <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
-   <script src="{{ static_url('js/webrtc-adapter.js') }}"></script>
-   <script src="{{ static_url('js/main.js') }}"></script>
-   <script src="{{ static_url('js/materialize.min.js') }}"></script>
-  </body>
+</footer>
+<div id="dialog-message" >
+  <button id="btn-reject" class="btn left red darken-5" onclick="reject()">Reject</button>
+  <button id="btn-accept" class="btn right green darken -5" onclick="accept()">Receve</button>
+</div>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+<script src="{{ static_url('js/webrtc-adapter.js') }}"></script>
+<script src="{{ static_url('js/main.js') }}"></script>
+<script src="{{ static_url('js/materialize.min.js') }}"></script>
+</body>
 </html>
 
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>

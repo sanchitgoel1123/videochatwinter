@@ -35,12 +35,43 @@ class MainHandler(BaseHandler):
 
 
 class LoginHandler(BaseHandler):
+    @gen.coroutine
     def get(self):
-        self.render('login.html')
+        self.render('login.html',msg={})
     
+    @gen.coroutine
     def post(self):
-        self.set_secure_cookie("user",self.get_argument("name"))
-        self.redirect("/")
+        email = self.get_argument('email')
+        password = self.get_argument('password')
+        if not password or not email:
+        	errormsg = "No Password or User Entered"
+        	msg = { }
+        	msg['errormsg'] = errormsg
+        	self.render('login.html', msg=msg)
+        else:
+        	sqlstm="select email,salt,password from usercredentials where email='%s'"%(email)
+        	check = self.db.execute(str(sqlstm))
+        	yield check
+        	ans = check.result()
+        	checkagainst = ans.fetchone()
+        	#logging.info(str(sqlstm))
+        	#logging.info(checkagainst[1])
+        	if checkagainst is not None:
+        		flag = pwd_context.verify(checkagainst[1]+password,checkagainst[2])
+        		if flag is True:
+        			self.set_secure_cookie("user",email)
+        			self.redirect('/')
+        		else:
+        			errormsg = "Invalid Email Or Password"
+        			msg = {}
+        			msg['errormsg']=errormsg
+        			self.render('login.html',msg=msg)
+        	else:
+        		errormsg = "Invalid Email Or Password"
+        		msg = {}
+        		msg['errormsg']=errormsg
+        		self.render('login.html',msg=msg)
+
 
 class RegisterHandler(BaseHandler):
     @tornado.gen.coroutine
@@ -57,14 +88,14 @@ class RegisterHandler(BaseHandler):
         password1=self.get_argument('password')
         password2=self.get_argument('renter_password')
         if (password1!=password2):
-            errormessage="Passwords Dont Match"
+            errormsg="Passwords Dont Match"
             msg = { }
-            msg['errormsg'] = errormessage
+            msg['errormsg'] = errormsg
             self.render('register.html', msg=msg)
         elif not password1 or not emailid or dob == "Date Of Birth":
-            errormessage="Fields Cannot Be Empty"
+            errormsg="Fields Cannot Be Empty"
             msg = { }
-            msg['errormsg'] = errormessage
+            msg['errormsg'] = errormsg
             self.render('register.html', msg=msg)
         else:
             salt  = base64.urlsafe_b64encode(uuid.uuid4().bytes)
@@ -77,9 +108,9 @@ class RegisterHandler(BaseHandler):
             x = y.fetchone()
             logging.info(x is not None)
             if (x is not None):
-                errormessage="User Already Exists"
+                errormsg="User Already Exists"
                 msg = {}
-                msg['errormsg'] = errormessage
+                msg['errormsg'] = errormsg
                 self.render('register.html', msg=msg)
             else:
                 try:
@@ -88,13 +119,13 @@ class RegisterHandler(BaseHandler):
                     self.redirect('/')
                 except:
                     self.write(str(error))
-                    errormessage="Database Error.Please Try Later"
+                    errormsg="Database Error.Please Try Later"
                     msg = { }
-                    msg['errormsg'] = errormessage
+                    msg['errormsg'] = errormsg
                     self.redirect('/register')
         
 
-class EchoWebSocket(WebSocketHandler):
+class EchoWebSocket(WebSocketHandler,BaseHandler):
     clients = []
 
     def open(self):
@@ -122,7 +153,7 @@ def main():
     settings = dict(
         template_path=rel('templates'),
         static_path=rel('static'),
-        cookie_secret=base64.b64encode(os.urandom(50)).decode('ascii'),
+        cookie_secret=u'6s+CeN4uMGFyEsRL6SNloaC1vql99xKbIWJaQYSYjMNoZDbDirZxbCUq5qQZdP7S+GM=',
         login_url='/login',
         xsrf_cookies=True,
         debug=True,
