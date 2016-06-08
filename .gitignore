@@ -7,8 +7,6 @@
 *.o
 *.so
 .env
-venv/
-./venv/
 
 # Packages #
 ############
