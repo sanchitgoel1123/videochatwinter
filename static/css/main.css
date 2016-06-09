@@ -128,6 +128,11 @@ body
     color:red;
 }
 
+.checkbox-login[type="checkbox"].filled-in:checked + label:after{
+     border: 2px solid grey;
+     background-color: grey;
+}
+
 .picker__date-display, .picker__weekday-display{
     background-color: grey;
 }
