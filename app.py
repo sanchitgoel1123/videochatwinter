@@ -17,6 +17,7 @@ from passlib.apps import custom_app_context as pwd_context
 import urlparse
 from tornado import gen
 import datetime
+from termcolor import colored
 
 rel = lambda *x: os.path.abspath(os.path.join(os.path.dirname(__file__), *x))
 
@@ -43,7 +44,7 @@ class MainHandler(BaseHandler):
             sqlstm = "select loggedin from loggedinuser where email='%s';"%(email)
             check = self.db.execute(str(sqlstm))
             yield check
-            print ("Executed Query in MainHandler.get(): %s" % (sqlstm))
+            print colored(("Executed Query in MainHandler.get(): %s" % (sqlstm)),'blue')
             sys.stdout.flush()
             ans = check.result()
             checkagainst = ans.fetchone()
@@ -54,11 +55,11 @@ class MainHandler(BaseHandler):
                 try:
                     sqlstm = "update loggedinuser set lastloggedin=now(),loggedin=true where email='%s';"%(email)
                     yield self.db.execute(str(sqlstm))
-                    print ("Executed Query in MainHandler.get(): %s" % (sqlstm))
+                    print colored(("Executed Query in MainHandler.get(): %s" % (sqlstm)),'blue')
                     sys.stdout.flush()
                     self.render('index.html')
                 except:
-                    print "Error in Block MainHandler"
+                    print colored("Error in Block MainHandler",'red')
                     sys.stdout.flush()
 
 
@@ -72,7 +73,6 @@ class LoginHandler(BaseHandler):
         email = self.get_argument('email')
         password = self.get_argument('password')
         self.set_secure_cookie("keeplogged", self.get_argument('keeplogged'))
-        print self.get_argument('keeplogged')
         if not password or not email:
             errormsg = "No Password or User Entered"
             msg = { }
@@ -82,7 +82,7 @@ class LoginHandler(BaseHandler):
             sqlstm="select email,salt,password from usercredentials where email='%s';"%(email)
             check = self.db.execute(str(sqlstm))
             yield check
-            print ("Executed Query in LoginHandler.post(): %s" % (sqlstm))
+            print colored(("Executed Query in LoginHandler.post(): %s" % (sqlstm)),'blue')
             sys.stdout.flush()
             ans = check.result()
             checkagainst = ans.fetchone()
@@ -90,10 +90,10 @@ class LoginHandler(BaseHandler):
                 flag = pwd_context.verify(checkagainst[1]+password, checkagainst[2])
                 if flag is True:
                     self.set_secure_cookie("user",email)
-                    print ("User %s logged in %s in LoginHandler.post()"%(email,datetime.datetime.now()))
+                    print colored(("User %s logged in %s in LoginHandler.post()"%(email,datetime.datetime.now())),'green')
                     sqlstm="update loggedinuser set lastloggedin=now(),loggedin=true where email='%s';"%(email)
                     yield self.db.execute(str(sqlstm))
-                    print ("Executed Query in LoginHandler.post(): %s" % (sqlstm))
+                    print colored(("Executed Query in LoginHandler.post(): %s" % (sqlstm)),'blue')
                     sys.stdout.flush()
                     self.redirect('/')
                 else:
@@ -140,7 +140,7 @@ class RegisterHandler(BaseHandler):
             logging.info(str(check))
             x = self.db.execute(check)
             y = yield x
-            print ("Executed Query in RegisterHandler.post(): %s" % (check))
+            print colored(("Executed Query in RegisterHandler.post(): %s" % (check)),'blue')
             sys.stdout.flush()
             x = y.fetchone()
             logging.info(x is not None)
@@ -152,11 +152,11 @@ class RegisterHandler(BaseHandler):
             else:
                 try:
                     yield self.db.execute(str(sqlstm),(firstname,lastname,emailid,hashed_password,salt,dob))
-                    print ("Executed Query in RegisterHandler.post(): %s" % ("insert into usercredentials values (%s,%s,%s,%s,%s,%s);"%(firstname,lastname,emailid,hashed_password,salt,dob)))
+                    print colored(("Executed Query in RegisterHandler.post(): %s" % ("insert into usercredentials values (%s,%s,%s,%s,%s,%s);"%(firstname,lastname,emailid,hashed_password,salt,dob))),'blue')
                     sys.stdout.flush()
                     self.set_secure_cookie("user", emailid)
                     self.set_secure_cookie("keeplogged",str(0))
-                    print "User %s registered %s in RegisterHandler.post()"%(emailid,datetime.datetime.now())
+                    print colored("User %s registered %s in RegisterHandler.post()"%(emailid,datetime.datetime.now()),'green')
                     sys.stdout.flush()
                     self.redirect('/')
                 except:
@@ -187,14 +187,14 @@ class EchoWebSocket(WebSocketHandler,BaseHandler):
         sqlstm="update loggedinuser set loggedin=false where email='%s';"%(str(email))
         if flag is not None and not bool(int(flag)) and email is not None:
             yield self.db.execute(str(sqlstm))
-            print ("Executed Query in EchoWebSocket.on_close(): %s" % (sqlstm))
-            print "User %s left %s in EchoWebSocket.on_close()"%(email,datetime.datetime.now())
+            print colored(("Executed Query in EchoWebSocket.on_close(): %s" % (sqlstm)),'blue')
+            print colored("User %s left %s in EchoWebSocket.on_close()"%(email,datetime.datetime.now()),'green')
             sys.stdout.flush()
         else:
             sqlstm="update loggedinuser set loggedin=true where email='%s';"%(str(email))
             yield self.db.execute(str(sqlstm))
-            print ("Executed Query in EchoWebSocket.on_close(): %s" % (sqlstm))
-            print "User %s left %s in EchoWebSocket.on_close()"%(email,datetime.datetime.now())
+            print colored(("Executed Query in EchoWebSocket.on_close(): %s" % (sqlstm)),'blue')
+            print colored("User %s left %s in EchoWebSocket.on_close()"%(email,datetime.datetime.now()),'green')
             sys.stdout.flush()
         EchoWebSocket.clients.remove(self)
 
