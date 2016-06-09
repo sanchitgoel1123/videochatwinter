@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import os
+import sys
 import logging
 import base64
 import uuid
@@ -26,11 +27,24 @@ class BaseHandler(RequestHandler):
     def get_current_user(self):
         return self.get_secure_cookie("user")
 
+    def get_logged_in(self):
+        return self.get_secure_cookie("keeplogged")
+
 
 class MainHandler(BaseHandler):
+    @gen.coroutine
     def get(self):
         if not self.current_user:
             self.redirect("/login")
+        else:
+            email = self.current_user
+            sqlstm = "select loggedin from loggedinuser where email='%s'"%(email)
+            check = self.db.execute(str(sqlstm))
+            yield check
+            ans = check.result()
+            checkagainst = ans.fetchone()
+            if not checkagainst[0]:
+                self.redirect("/login")
         self.render('index.html')
 
 
@@ -43,34 +57,35 @@ class LoginHandler(BaseHandler):
     def post(self):
         email = self.get_argument('email')
         password = self.get_argument('password')
+        self.set_secure_cookie("keeplogged",self.get_argument("keeplogged"))
         if not password or not email:
-        	errormsg = "No Password or User Entered"
-        	msg = { }
-        	msg['errormsg'] = errormsg
-        	self.render('login.html', msg=msg)
+            errormsg = "No Password or User Entered"
+            msg = { }
+            msg['errormsg'] = errormsg
+            self.render('login.html', msg=msg)
         else:
-        	sqlstm="select email,salt,password from usercredentials where email='%s'"%(email)
-        	check = self.db.execute(str(sqlstm))
-        	yield check
-        	ans = check.result()
-        	checkagainst = ans.fetchone()
-        	#logging.info(str(sqlstm))
-        	#logging.info(checkagainst[1])
-        	if checkagainst is not None:
-        		flag = pwd_context.verify(checkagainst[1]+password,checkagainst[2])
-        		if flag is True:
-        			self.set_secure_cookie("user",email)
-        			self.redirect('/')
-        		else:
-        			errormsg = "Invalid Email Or Password"
-        			msg = {}
-        			msg['errormsg']=errormsg
-        			self.render('login.html',msg=msg)
-        	else:
-        		errormsg = "Invalid Email Or Password"
-        		msg = {}
-        		msg['errormsg']=errormsg
-        		self.render('login.html',msg=msg)
+            sqlstm="select email,salt,password from usercredentials where email='%s';"%(email)
+            check = self.db.execute(str(sqlstm))
+            yield check
+            ans = check.result()
+            checkagainst = ans.fetchone()
+            if checkagainst is not None:
+                flag = pwd_context.verify(checkagainst[1]+password,checkagainst[2])
+                if flag is True:
+                    self.set_secure_cookie("user",email)
+                    sqlstm="update loggedinuser set lastloggedin=now(),loggedin=true where email='%s';"%(email)
+                    yield self.db.execute(str(sqlstm))
+                    self.redirect('/')
+                else:
+                    errormsg = "Invalid Email Or Password"
+                    msg = {}
+                    msg['errormsg']=errormsg
+                    self.render('login.html',msg=msg)
+            else:
+                errormsg = "Invalid Email Or Password"
+                msg = {}
+                msg['errormsg']=errormsg
+                self.render('login.html',msg=msg)
 
 
 class RegisterHandler(BaseHandler):
@@ -116,6 +131,7 @@ class RegisterHandler(BaseHandler):
                 try:
                     yield self.db.execute(str(sqlstm),(firstname,lastname,emailid,hashed_password,salt,dob))
                     self.set_secure_cookie("user", emailid)
+                    self.set_secure_cookie("keeplogged",str(0))
                     self.redirect('/')
                 except:
                     self.write(str(error))
@@ -139,9 +155,16 @@ class EchoWebSocket(WebSocketHandler,BaseHandler):
                 continue
             client.write_message(message)
 
+    @gen.coroutine
     def on_close(self):
         logging.info('WebSocket closed')
+        email = self.current_user
+        flag = self.get_secure_cookie("keeplogged")
+        sqlstm="update loggedinuser set loggedin=false where email='%s';"%(str(email))
+        if not bool(int(flag)) and flag is not None:
+            yield self.db.execute(str(sqlstm))
         EchoWebSocket.clients.remove(self)
+
 
 
 def main():
