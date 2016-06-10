@@ -126,7 +126,7 @@ class RegisterHandler(BaseHandler):
         password2=self.get_argument('renter_password')
         g_recaptcha = self.get_argument('g-recaptcha-response')
         data = {}
-        data['secret']='6LfdQSITAAAAAFi73APSn3fCkZCsGnK_M3CRevsU'
+        data['secret']='6LdlRCITAAAAAGwIvcs2r-Yf1RK7luQb5lr0ckrq'
         data['response']=g_recaptcha
         data['remoteip']=self.request.remote_ip
         body = urllib.urlencode(data)
