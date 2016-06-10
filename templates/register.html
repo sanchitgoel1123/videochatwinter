@@ -89,8 +89,13 @@
               <label for="icon_prefix2">Renter Password</label>
             </div>
           </div>
+          <div class = "row">
+          	<div class="col s12 m8 offset-m4">
+          		<div class="g-recaptcha" data-sitekey="6LfdQSITAAAAAEoqVQAano0goYLJnrP0Ody6HNPK" name='g-captcha'></div>
+          	</div>
+          </div>
           <div class="row">
-            <input id="btn-submit" class="btn green darken-5  col s12 m2 offset-m5 " type="Submit" value="Register">
+            <input id="btn-submit" class="btn green darken-5  col s12 m2 offset-m5 waves-effect waves-light" type="Submit" value="Register">
           </div>
         </form>
       </div>
@@ -117,13 +122,9 @@
   
 </footer>
 
-<div id="dialog-message" >
-  <button id="btn-reject" class="btn left red darken-5" onclick="reject()">Reject</button>
-  <button id="btn-accept" class="btn right green darken -5" onclick="accept()">Receve</button>
-</div>
-
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+<script src='https://www.google.com/recaptcha/api.js'></script>
 <script src="{{ static_url('js/webrtc-adapter.js') }}"></script>
 <script src="{{ static_url('js/main.js') }}"></script>
 <script src="{{ static_url('js/materialize.min.js') }}"></script>

@@ -18,6 +18,8 @@ import urlparse
 from tornado import gen
 import datetime
 from termcolor import colored
+import urllib
+import json
 
 rel = lambda *x: os.path.abspath(os.path.join(os.path.dirname(__file__), *x))
 
@@ -122,6 +124,16 @@ class RegisterHandler(BaseHandler):
         dob=self.get_argument('dob')
         password1=self.get_argument('password')
         password2=self.get_argument('renter_password')
+        g_recaptcha = self.get_argument('g-recaptcha-response')
+        data = {}
+        data['secret']='6LfdQSITAAAAAFi73APSn3fCkZCsGnK_M3CRevsU'
+        data['response']=g_recaptcha
+        data['remoteip']=self.request.remote_ip
+        body = urllib.urlencode(data)
+        http_client = tornado.httpclient.AsyncHTTPClient()
+        validate=http_client.fetch("https://www.google.com/recaptcha/api/siteverify", method='POST', headers=None, body=body)
+        temp = yield validate
+        recaptchavalue = json.loads(temp.body)
         if (password1!=password2):
             errormsg="Passwords Dont Match"
             msg = { }
@@ -129,6 +141,11 @@ class RegisterHandler(BaseHandler):
             self.render('register.html', msg=msg)
         elif not password1 or not emailid or dob == "Date Of Birth":
             errormsg="Fields Cannot Be Empty"
+            msg = { }
+            msg['errormsg'] = errormsg
+            self.render('register.html', msg=msg)
+        elif recaptchavalue['success'] is False:
+            errormsg="Please Check Recaptcha"
             msg = { }
             msg['errormsg'] = errormsg
             self.render('register.html', msg=msg)
