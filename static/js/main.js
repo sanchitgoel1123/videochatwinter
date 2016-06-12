@@ -1,4 +1,5 @@
 var ws = new WebSocket('ws://' + location.host + '/ws');
+var onaddstreamcalled = 0;
 var ICE_config = {
     'iceServers': [{
         url: 'stun:stun01.sipphone.com'
@@ -52,21 +53,23 @@ var ICE_config = {
         username: '28224511:1379330808'
     }]
 }
+var $toastcontent=$('<div id="dialog-message" >'+
+                    '<button id="btn-reject" class="btn left red waves-effect waves-light" onclick="reject()">Reject</button>'+
+                    '<button id="btn-accept" class="btn right green waves-light waves-effect" onclick="accept()" >Receve</button>'+
+                  '</div>');
 var initiator;
+var acceptoffer;
 var pc = new RTCPeerConnection(ICE_config);
-var divbox = $('#dialog-message');
-divbox.dialog({
-    autoOpen: false
-});
-notifyoffer();
+var globalsignal;
 
+notifyoffer();
 
 function call() {
     $('#btn-call').addClass('btn-active');
     initiator = true;
     init();
+    //setTimeout(call, 10000)
 }
-
 
 function receive() {
     $('#btn-receive').addClass('btn-active');
@@ -76,16 +79,14 @@ function receive() {
 
 function accept() {
     $('#btn-accept').addClass('btn-active');
-    $('#dialog-message').dialog("close");
-    receive();
-    ws.send(JSON.stringify({
-        "accept": 1
-    }))
+    $('.toast').remove();
+    acceptoffer=1;
+    notifyoffer();
 }
 
 function reject() {
     $('#btn-accept').addClass('btn-active');
-    $('#dialog-message').dialog("close")
+    $('.toast').remove()
     ws.send(JSON.stringify({
         "accept": 0
     }));
@@ -106,25 +107,60 @@ function init() {
 }
 
 function notifyoffer(stream) {
+    pc.onicecandidate = function(event) {
+        console.log(event.candidate)
+        if (event.candidate) {
+            ws.send(JSON.stringify(event.candidate));
+        }
+    };
+    pc.onaddstream = function(event) {
+        console.log(event)
+        $('#remote').attachStream(event.stream);
+        logStreaming(true);
+    };
+    if (stream) {
+        pc.addStream(stream);
+        $('#local').attachStream(stream);
+    }
+
     ws.onmessage = function(event) {
         var signal = JSON.parse(event.data)
-        if (signal.type == "offer") {
-            var divbox = $('#dialog-message');
-            divbox.dialog('open');
+        if (signal.type == "offer" || signal.sdp) {
+            globalsignal = signal;
+            Materialize.toast($toastcontent,10000)      
         }
-        var check = JSON.parse(event.data);
-        if (check.accept == 1) {
-            log("accept call");
-            call();
+        else if (signal.candidate) {
+            pc.addIceCandidate(new RTCIceCandidate(signal));
         }
+    }
+    if (acceptoffer==1){
+        $('#btn-accept').addClass('btn-active');
+        $('.toast').remove();
+        var constraints = {
+            audio: $('#audio').prop('checked'),
+            video: $('#video').prop('checked')
+        };
+
+        if (constraints.audio || constraints.video) {
+            getUserMedia(constraints, (function(stream){if (stream) {
+                                                console.log(stream)
+                                                pc.addStream(stream);
+                                                $('#local').attachStream(stream);
+                                                }}), fail);
+        } else {
+            (function(){});
+        }
+        initiator = false;
+        receiveOffer(globalsignal);
+        ws.send(JSON.stringify({
+            "accept": 1
+        }))
     }
 }
 
 
 
 function connect(stream) {
-    pc = new RTCPeerConnection(ICE_config);
-
     if (stream) {
         pc.addStream(stream);
         $('#local').attachStream(stream);
@@ -135,25 +171,18 @@ function connect(stream) {
         logStreaming(true);
     };
     pc.onicecandidate = function(event) {
+        console.log(event.candidate)
         if (event.candidate) {
             ws.send(JSON.stringify(event.candidate));
         }
     };
     ws.onmessage = function(event) {
+        console.log(event)
         var signal = JSON.parse(event.data);
         if (signal.sdp) {
-            if (initiator) {
-                receiveAnswer(signal);
-            } else {
-                receiveOffer(signal);
-            }
+            receiveAnswer(signal);
         } else if (signal.candidate) {
             pc.addIceCandidate(new RTCIceCandidate(signal));
-        }
-        var check = JSON.parse(event.data);
-        if (check.accept == 1) {
-            log("accept call");
-            call();
         }
     };
 

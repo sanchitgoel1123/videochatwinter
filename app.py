@@ -191,7 +191,7 @@ class EchoWebSocket(WebSocketHandler,BaseHandler):
         EchoWebSocket.clients.append(self)
 
     def on_message(self, message):
-        print ('Got message from %s: %s', self.__dict__, message)
+        print ('Got message from %s: %s')%( self.__dict__, message)
         for client in EchoWebSocket.clients:
             if client is self:
                 continue
