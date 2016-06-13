@@ -39,6 +39,8 @@ class MainHandler(BaseHandler):
     @tornado.web.asynchronous
     @gen.coroutine
     def get(self):
+        print ("got request from %s")%self.request
+        sys.stdout.flush()
         if self.current_user is None and not self.current_user:
             self.redirect("/login")
         else:
