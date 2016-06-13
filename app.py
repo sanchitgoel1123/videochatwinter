@@ -34,6 +34,11 @@ class BaseHandler(RequestHandler):
     def get_logged_in(self):
         return self.get_secure_cookie("keeplogged")
 
+    def prepare(self):
+        if ('X-Forwarded-Proto' in self.request.headers and self.request.headers['X-Forwarded-Proto'] != 'https'):
+            self.redirect(re.sub(r'^([^:]+)', 'https', self.request.full_url()))
+
+
 
 class MainHandler(BaseHandler):
     @tornado.web.asynchronous
