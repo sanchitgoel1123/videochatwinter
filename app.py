@@ -20,6 +20,7 @@ import datetime
 from termcolor import colored
 import urllib
 import json
+import re
 
 rel = lambda *x: os.path.abspath(os.path.join(os.path.dirname(__file__), *x))
 
