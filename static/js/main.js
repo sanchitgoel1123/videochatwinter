@@ -1,5 +1,5 @@
 var ws = new WebSocket('wss://' + location.host + '/ws');
-var onaddstreamcalled = 0;
+var usertocallorchat;
 var ICE_config = {
     'iceServers': [{
         url: 'stun:stun01.sipphone.com'
@@ -66,7 +66,12 @@ var acceptoffer;
 var pc = new RTCPeerConnection(ICE_config);
 var globalsignal;
 
-notifyoffer();
+$(document).ready(function(){
+    // the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
+    notifyoffer();
+    $("#body").hide();
+    $('.modal-trigger').leanModal();
+  })
 
 function call() {
     $('#btn-call').addClass('btn-active');
@@ -95,7 +100,6 @@ function reject() {
         "accept": 0
     }));
 }
-
 
 function init() {
     var constraints = {
@@ -129,12 +133,17 @@ function notifyoffer(stream) {
 
     ws.onmessage = function(event) {
         var signal = JSON.parse(event.data)
+        console.log(signal);
         if (signal.type == "offer" || signal.sdp) {
             globalsignal = signal;
+            $("#body").show();
             Materialize.toast($toastcontent,10000)      
         }
         else if (signal.candidate) {
             pc.addIceCandidate(new RTCIceCandidate(signal));
+        }
+        else if(signal.Online){
+            addOnline(signal);
         }
     }
     if (acceptoffer==1){
@@ -162,8 +171,32 @@ function notifyoffer(stream) {
     }
 }
 
+function addOnline(signal){
+    var elements = $();
+    if ($("main #modal1 #contactlist ul").children().length>0){
+        $("main #modal1 #contactlist ul").empty()
+    }
+    elements=elements.add("<li class='collection-header'><h4>Users</h4></li>");
+    if (signal.Online.length==0){
+        elements=elements.add("<li class='collection-item'>"+'No User is Currently Online'+"<\li>");
+    }
+    for (x=0;x<signal.Online.length;x++){
+        elements=elements.add("<li onclick='select(this)' class='collection-item'>"+signal.Online[x]+"<\li>");
+    }
+    $("main #modal1 #contactlist ul").append(elements);
+    $('#modal1').openModal();
+}
 
+function select(contact){
+    console.log(contact);
+    usertocallorchat=$(contact).text();
+    $('#modal1').closeModal();
+    $("#body").show();
+}
 
+function online(){
+    ws.send(JSON.stringify("getonlineusers"));
+}
 function connect(stream) {
     if (stream) {
         pc.addStream(stream);

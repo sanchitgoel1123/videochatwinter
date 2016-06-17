@@ -45,8 +45,6 @@ class MainHandler(BaseHandler):
     @tornado.web.asynchronous
     @gen.coroutine
     def get(self):
-        print ("got request from %s")%self.request
-        sys.stdout.flush()
         if self.current_user is None and not self.current_user:
             self.redirect("/login")
         else:
@@ -134,7 +132,7 @@ class RegisterHandler(BaseHandler):
         password2=self.get_argument('renter_password')
         g_recaptcha = self.get_argument('g-recaptcha-response')
         data = {}
-        data['secret']='6LdlRCITAAAAAGwIvcs2r-Yf1RK7luQb5lr0ckrq'
+        data['secret']='6LdlRCITAAAAACEGjW_j04xgnAUNvhuZt50IJl_0'
         data['response']=g_recaptcha
         data['remoteip']=self.request.remote_ip
         body = urllib.urlencode(data)
@@ -142,6 +140,9 @@ class RegisterHandler(BaseHandler):
         validate=http_client.fetch("https://www.google.com/recaptcha/api/siteverify", method='POST', headers=None, body=body)
         temp = yield validate
         recaptchavalue = json.loads(temp.body)
+        print data
+        print recaptchavalue
+        sys.stdout.flush()
         if (password1!=password2):
             errormsg="Passwords Dont Match"
             msg = { }
@@ -193,17 +194,29 @@ class RegisterHandler(BaseHandler):
         
 
 class EchoWebSocket(WebSocketHandler,BaseHandler):
-    clients = []
-
+    clients = {}
+    NameClients = {}
+    NameClients['Online']=[]
     def open(self):
-        EchoWebSocket.clients.append(self)
+        #self.write_message(json.dumps(EchoWebSocket.NameClients))
+        EchoWebSocket.clients[self.current_user]=self
+        EchoWebSocket.NameClients['Online'].append(self.current_user)
+
 
     def on_message(self, message):
-        print ('Got message from %s: %s')%( self.__dict__, message)
-        for client in EchoWebSocket.clients:
-            if client is self:
-                continue
-            client.write_message(message)
+        print ('Got message from %s: %s')%(self, message)
+        var = json.loads(message)
+        print var
+        sys.stdout.flush()
+        if var=='getonlineusers':
+            EchoWebSocket.NameClients['Online'].remove(self.current_user)
+            self.write_message(json.dumps(EchoWebSocket.NameClients))
+            EchoWebSocket.NameClients['Online'].append(self.current_user)
+        else:
+            for client in EchoWebSocket.clients:
+                if client is self:
+                    continue
+                EchoWebSocket.clients[client].write_message(message)
 
     @gen.coroutine
     def on_close(self):
@@ -221,7 +234,8 @@ class EchoWebSocket(WebSocketHandler,BaseHandler):
             print colored(("Executed Query in EchoWebSocket.on_close(): %s" % (sqlstm)),'blue')
             print colored("User %s left %s in EchoWebSocket.on_close()"%(email,datetime.datetime.now()),'green')
             sys.stdout.flush()
-        EchoWebSocket.clients.remove(self)
+        EchoWebSocket.clients.pop(self.current_user,None)
+        EchoWebSocket.NameClients['Online'].remove(self.current_user)
 
 
 
