@@ -1,4 +1,4 @@
-var ws = new WebSocket('wss://' + location.host + '/ws');
+var ws = new WebSocket('ws://' + location.host + '/ws');
 var usertocallorchat;
 var ICE_config = {
     'iceServers': [{
