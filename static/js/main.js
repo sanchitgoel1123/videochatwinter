@@ -116,13 +116,11 @@ function init() {
 
 function notifyoffer(stream) {
     pc.onicecandidate = function(event) {
-        console.log(event.candidate)
         if (event.candidate) {
             ws.send(JSON.stringify(event.candidate));
         }
     };
     pc.onaddstream = function(event) {
-        console.log(event)
         $('#remote').attachStream(event.stream);
         logStreaming(true);
     };
@@ -133,11 +131,11 @@ function notifyoffer(stream) {
 
     ws.onmessage = function(event) {
         var signal = JSON.parse(event.data)
-        console.log(signal);
-        if (signal.type == "offer" || signal.sdp) {
+        if (signal.type == "offer" ) {
             globalsignal = signal;
+            pc.setRemoteDescription(new RTCSessionDescription(signal));
             $("#body").show();
-            Materialize.toast($toastcontent,10000)      
+            Materialize.toast($toastcontent,10000)   
         }
         else if (signal.candidate) {
             pc.addIceCandidate(new RTCIceCandidate(signal));
@@ -156,7 +154,6 @@ function notifyoffer(stream) {
 
         if (constraints.audio || constraints.video) {
             getUserMedia(constraints, (function(stream){if (stream) {
-                                                console.log(stream)
                                                 pc.addStream(stream);
                                                 $('#local').attachStream(stream);
                                                 }}), fail);
@@ -188,7 +185,6 @@ function addOnline(signal){
 }
 
 function select(contact){
-    console.log(contact);
     usertocallorchat=$(contact).text();
     $('#modal1').closeModal();
     $("#body").show();
@@ -208,13 +204,11 @@ function connect(stream) {
         logStreaming(true);
     };
     pc.onicecandidate = function(event) {
-        console.log(event.candidate)
         if (event.candidate) {
             ws.send(JSON.stringify(event.candidate));
         }
     };
     ws.onmessage = function(event) {
-        console.log(event)
         var signal = JSON.parse(event.data);
         if (signal.sdp) {
             receiveAnswer(signal);
@@ -246,16 +240,13 @@ function createOffer() {
 
 function receiveOffer(offer) {
     log('received offer...');
-    pc.setRemoteDescription(new RTCSessionDescription(offer), function() {
-        log('creating answer...');
-        pc.createAnswer(function(answer) {
+    pc.createAnswer(function(answer) {
             log('created answer...');
             pc.setLocalDescription(answer, function() {
                 log('sent answer');
                 ws.send(JSON.stringify(answer));
             }, fail);
         }, fail);
-    }, fail);
 }
 
 
