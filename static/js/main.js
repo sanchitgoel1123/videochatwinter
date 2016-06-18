@@ -131,7 +131,7 @@ function notifyoffer(stream) {
 
     ws.onmessage = function(event) {
         var signal = JSON.parse(event.data)
-        if (signal.type == "offer" ) {
+        if (signal.type == "offer" || (signal.sdp && webrtcDetectedBrowser=="firefox")) {
             globalsignal = signal;
             pc.setRemoteDescription(new RTCSessionDescription(signal));
             $("#body").show();
@@ -156,12 +156,14 @@ function notifyoffer(stream) {
             getUserMedia(constraints, (function(stream){if (stream) {
                                                 pc.addStream(stream);
                                                 $('#local').attachStream(stream);
+                                                initiator = false;
+                                                receiveOffer(globalsignal);
                                                 }}), fail);
         } else {
             (function(){});
         }
-        initiator = false;
-        receiveOffer(globalsignal);
+        //initiator = false;
+        //receiveOffer(globalsignal);
         ws.send(JSON.stringify({
             "accept": 1
         }))
@@ -213,7 +215,7 @@ function connect(stream) {
         if (signal.sdp) {
             receiveAnswer(signal);
         } else if (signal.candidate) {
-            pc.addIceCandidate(new RTCIceCandidate(signal));
+            pc.addIceCandidate(new RTCIceCandidate(signal)).catch(function(){ console.log("unable to add candidate");});
         }
     };
 
