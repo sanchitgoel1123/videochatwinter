@@ -271,6 +271,9 @@ def main():
     future.result()
     port = int(os.environ.get("PORT", 5000))
     application.listen(port)
+    application.listen(port+1)
+    application.listen(port+2)
+    application.listen(port+3)
     ioloop.start()
 
 
